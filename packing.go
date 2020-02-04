@@ -84,6 +84,9 @@ Flags are comma-separated keys. The following are available:
 	invertedbool      Specifies that the `true` and `false` encodings for
 	                  boolean should be swapped.
 */
+
+
+
 func Unpack(data []byte, order binary.ByteOrder, v interface{}) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -101,6 +104,28 @@ func Unpack(data []byte, order binary.ByteOrder, v interface{}) (err error) {
 
 	return
 }
+
+
+
+
+func UnpackPartial(data []byte, order binary.ByteOrder, v interface{}) (remaining []byte, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			var ok bool
+			if err, ok = r.(error); !ok {
+				panic(err)
+			}
+		}
+	}()
+
+	f, val := fieldFromIntf(v)
+	ss := structstack{allowexpr: expressionsEnabled, buf: data}
+	d := decoder{structstack: ss, order: order}
+	d.read(f, val)
+
+	return d.buf, nil
+}
+
 
 /*
 SizeOf returns the binary encoded size of the given value, in bytes.
