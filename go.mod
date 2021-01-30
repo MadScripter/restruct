@@ -1,4 +1,4 @@
-module github.com/go-restruct/restruct
+module github.com/MadScripter/restruct
 
 go 1.12
 
